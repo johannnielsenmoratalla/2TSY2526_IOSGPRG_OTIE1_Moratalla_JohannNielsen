@@ -12,6 +12,13 @@ public class PlayerStats : MonoBehaviour
     public int playerHP = 5;
     public int playerScore = 0;
 
+    public Image energyBar;
+
+    public float maxEnergy = 100f;
+    public float currentEnergy = 0.0f;
+    public float fillSpeed = 0.5f;
+    public bool boosted = false;
+
     private void Awake()
     {
         if (instance == null)
@@ -26,14 +33,15 @@ public class PlayerStats : MonoBehaviour
     }
     private void Start()
     {
-        playerHP = PlayerHP.instance.GetHP();
+        currentEnergy = 100.0f;
     }
     private void Update()
     {
-        if (healthText != null && scoreText != null )
+        if (healthText != null && scoreText != null && energyBar != null)
         {
             healthText.text = "HP: " + playerHP;
             scoreText.text = "Score: " + playerScore;
+            energyBar.fillAmount = currentEnergy / maxEnergy;
         }
     }
     public void PlusScore()
@@ -61,6 +69,24 @@ public class PlayerStats : MonoBehaviour
         if (GameManager.instance.GetIsAlive() == true)
         {
             playerHP -= 1;
+        }
+    }
+
+    public void IncreaseEnergy(float increaseAmount)
+    {
+        currentEnergy += increaseAmount;
+
+        currentEnergy = Mathf.Clamp(currentEnergy, 0f, maxEnergy);
+        energyBar.fillAmount = currentEnergy / maxEnergy;
+    }
+
+    public void BoostButtonPressed()
+    {
+        if (currentEnergy <= 100.0f)
+        {
+            GameManager.instance.Boosted();
+            Debug.Log("Pressed");
+            currentEnergy = 0;
         }
     }
 

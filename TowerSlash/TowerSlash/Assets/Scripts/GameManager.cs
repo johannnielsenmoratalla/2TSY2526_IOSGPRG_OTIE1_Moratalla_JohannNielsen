@@ -19,6 +19,13 @@ public class GameManager : MonoBehaviour
     public bool isAlive = true;
 
     public bool isSpeedRun = false;
+
+    public float timeScaleFactor = 2.0f;
+    public float boostedDuration = 0.3f;
+
+    public bool boosted = false;
+    public bool dashTap = false;
+
     private void Awake()
     {
         if (instance == null)
@@ -45,12 +52,28 @@ public class GameManager : MonoBehaviour
                 if (swipeObject.GetComponent<TouchInputs>()._swipeDirections == enemyObjects[i].GetComponent<Enemy>().thisEnemyDirection)
                 {
                     KilledEnemy(i);
+                    PlayerStats.instance.PlusScore();
+                    PowerUp();
+                    if (isSpeedRun == false)
+                    {
+                        PlayerStats.instance.IncreaseEnergy(20.0f);
+                    }
+                    else if (isSpeedRun == true)
+                    {
+                        PlayerStats.instance.IncreaseEnergy(50.0f);
+                    }
 
                 }
             }
-
+            if (boosted)
+            {
+                Time.timeScale = timeScaleFactor;
+            }
+            else if (!boosted && !dashTap)
+            {
+                Time.timeScale = 1.0f;
+            }
         }
-
     }
 
     public void KilledEnemy(int enemyNumber)
@@ -67,7 +90,15 @@ public class GameManager : MonoBehaviour
 
     public void ReduceHealth()
     {
-        PlayerStats.instance.DecreaseHealth();
+        if (!boosted)
+        {
+            PlayerStats.instance.DecreaseHealth();
+        }
+        else if (boosted)
+        {
+            PlayerStats.instance.PlusScore();
+        }
+        PlayerStats.instance.PlayerHealthCheck();
     }
 
     public void PlayerDeath()
@@ -102,5 +133,54 @@ public class GameManager : MonoBehaviour
     public void SetupEndScreen(GameObject EndScreen)
     {
         gameOverScreen = EndScreen;
+    }
+
+    public void Boosted()
+    {
+        boosted = true;
+        Time.timeScale = timeScaleFactor;
+        Invoke(nameof(Unboost), 20.0f);
+    }
+
+    public void PowerUp()
+    {
+        int powerUpChance = Random.Range(0, 100);
+        if (powerUpChance < 3)
+        {
+            PlayerStats.instance.IncreaseHealth();
+        }
+    }
+
+    public void DashTap()
+    {
+        Time.timeScale = timeScaleFactor;
+    }
+
+    public void ReturnSpeed()
+    {
+        Time.timeScale = 1.0f;
+    }
+
+    public bool GetBoolBoosted()
+    {
+        return boosted;
+    }
+    public void SetBoostedBool(bool setThisBool)
+    {
+        boosted = setThisBool;
+    }
+
+    public bool GetBoolDashTap()
+    {
+        return dashTap;
+    }
+    public void SetBoolDashTap(bool setThisBool)
+    {
+        dashTap = setThisBool;
+    }
+
+    public void Unboost()
+    {
+        boosted = false;
     }
 }
