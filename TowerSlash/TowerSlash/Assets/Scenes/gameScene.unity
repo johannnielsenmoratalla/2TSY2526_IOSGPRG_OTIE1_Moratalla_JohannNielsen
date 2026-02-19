@@ -464,7 +464,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthText: {fileID: 332719906}
   scoreText: {fileID: 1653389064}
-  playerHP: 5
+  playerHP: 0
   playerScore: 0
   energyBar: {fileID: 1000153568}
   maxEnergy: 100

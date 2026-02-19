@@ -5,9 +5,13 @@ using UnityEngine;
 public class PlayerHP : MonoBehaviour
 {
     public static PlayerHP instance;
-    private int playerHp = 0;
+    public int playerHp = 0;
     public bool isCharacterSpeed = false;
 
+    public void Start()
+    {
+        GetHP();
+    }
     public void Awake()
     {
         if (instance == null)

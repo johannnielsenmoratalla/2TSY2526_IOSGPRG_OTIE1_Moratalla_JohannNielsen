@@ -7,18 +7,16 @@ using UnityEngine.UI;
 public class PlayerStats : MonoBehaviour
 {
     public static PlayerStats instance;
+    public Image energyBar;
     public TextMeshProUGUI healthText;
     public TextMeshProUGUI scoreText;
     public int playerHP = 5;
     public int playerScore = 0;
 
-    public Image energyBar;
-
     public float maxEnergy = 100f;
     public float currentEnergy = 0.0f;
     public float fillSpeed = 0.5f;
     public bool boosted = false;
-
     private void Awake()
     {
         if (instance == null)
@@ -33,6 +31,7 @@ public class PlayerStats : MonoBehaviour
     }
     private void Start()
     {
+        playerHP = PlayerHP.instance.GetHP();
         currentEnergy = 100.0f;
     }
     private void Update()
@@ -52,7 +51,6 @@ public class PlayerStats : MonoBehaviour
         }
 
     }
-
     public void IncreaseHealth()
     {
         playerHP += 1;
@@ -71,7 +69,6 @@ public class PlayerStats : MonoBehaviour
             playerHP -= 1;
         }
     }
-
     public void IncreaseEnergy(float increaseAmount)
     {
         currentEnergy += increaseAmount;
@@ -79,7 +76,6 @@ public class PlayerStats : MonoBehaviour
         currentEnergy = Mathf.Clamp(currentEnergy, 0f, maxEnergy);
         energyBar.fillAmount = currentEnergy / maxEnergy;
     }
-
     public void BoostButtonPressed()
     {
         if (currentEnergy <= 100.0f)
@@ -89,5 +85,4 @@ public class PlayerStats : MonoBehaviour
             currentEnergy = 0;
         }
     }
-
 }

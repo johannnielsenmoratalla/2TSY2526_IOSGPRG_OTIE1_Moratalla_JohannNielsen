@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
-
+        //isSpeedRun = PlayerHP.instance.GetIsCharacterSpeed();
     }
     private void Update()
     {
@@ -104,7 +104,7 @@ public class GameManager : MonoBehaviour
     public void PlayerDeath()
     {
         isAlive = false;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        SceneManager.LoadScene("GameOverScene");
         if (gameOverScreen != null)
         {
             //gameOverScreen.SetActive(true);
