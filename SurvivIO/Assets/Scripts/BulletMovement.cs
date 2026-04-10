@@ -5,32 +5,49 @@ using UnityEngine;
 public class BulletMovement : MonoBehaviour
 {
     [SerializeField] private float bulletSpeed = 10f;
+    public AttributesManager shooterAtm;
 
     private Rigidbody2D rb;
+    private Collider2D bulletCollider;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        bulletCollider = GetComponent<Collider2D>();
 
-        if (rb != null)
+        if (rb == null || bulletCollider == null)
         {
-            rb.AddForce(transform.right * bulletSpeed, ForceMode2D.Impulse);
+            Debug.LogError("Bullet missing Rigidbody2D or Collider2D!");
+            return;
         }
-        else
+
+        if (shooterAtm != null)
         {
-            Debug.LogError("I didn't hit anything.");
+            Collider2D[] shooterColliders = shooterAtm.GetComponentsInChildren<Collider2D>();
+            foreach (var col in shooterColliders)
+            {
+                Physics2D.IgnoreCollision(bulletCollider, col);
+            }
         }
+
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        rb.AddForce(transform.right * bulletSpeed, ForceMode2D.Impulse);
+        Destroy(gameObject, 5f);
     }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (shooterAtm == null) return;
 
-        if (collision.GetComponent<PlayerMovement>() != null)
-        {
-            Destroy(this.gameObject);
-            //add minus player health
-        }
+        var targetAtm = collision.GetComponentInParent<AttributesManager>();
+        if (targetAtm == null) return;
 
-        Debug.Log("ShotMyself");
-        Destroy(this.gameObject, 5.0f);
+        if (targetAtm == shooterAtm) return;
+
+        if (shooterAtm.CompareTag("Player") && !collision.CompareTag("Enemy")) return;
+        if (shooterAtm.CompareTag("Enemy") && !collision.CompareTag("Player")) return;
+
+        targetAtm.TakeDamage(shooterAtm.attack);
+        Destroy(gameObject);
     }
 }

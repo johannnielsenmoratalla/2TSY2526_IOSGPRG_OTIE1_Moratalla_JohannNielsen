@@ -104,7 +104,14 @@ public class EnemyAI : MonoBehaviour
 
     private void FirePlayer()
     {
-        Instantiate(bulletPrefab, aiNozzle.position, aiNozzle.rotation);
+        Vector3 spawnPos = aiNozzle.position; 
+        GameObject bullet = Instantiate(bulletPrefab, spawnPos, aiNozzle.rotation);
+
+        BulletMovement bulletScript = bullet.GetComponent<BulletMovement>();
+        if (bulletScript != null)
+        {
+            bulletScript.shooterAtm = this.GetComponent<AttributesManager>();
+        }
     }
 
     private IEnumerator FireRoutine(GameObject theTarget)

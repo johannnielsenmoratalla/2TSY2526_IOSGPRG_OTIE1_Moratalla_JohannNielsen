@@ -7,6 +7,7 @@ public class Spawner : MonoBehaviour
 {
     [SerializeField] private GameObject[] ammos;
     [SerializeField] private GameObject[] weapons;
+    [SerializeField] private GameObject enemies;
 
     private void Start()
     {
@@ -26,6 +27,8 @@ public class Spawner : MonoBehaviour
             float randomX = Random.Range(-19.21f, 19.21f);
             float randomY = Random.Range(-14.81f, 14.81f);
             Vector3 spawnPosition = new Vector3(randomX, randomY, 0f);
+
+            Instantiate(enemies, spawnPosition, Quaternion.identity);
         }
     }
 

@@ -17,6 +17,6 @@ public class GunFire : MonoBehaviour
             bulletInventory.ReduceAmmo();    // pistol or shotgun
         }
 
-        Debug.Log("Fire");
+        //Debug.Log("Fire");
     }
 }
