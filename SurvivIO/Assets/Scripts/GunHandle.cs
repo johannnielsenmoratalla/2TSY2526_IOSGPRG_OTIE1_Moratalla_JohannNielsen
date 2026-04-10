@@ -1,8 +1,14 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GunHandle : MonoBehaviour
 {
     [SerializeField] private gunTypes thisGun;
+
+    public Button pistolHud;
+    public Button shootgunHud;
+    public Button ARHud;
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -31,11 +37,20 @@ public class GunHandle : MonoBehaviour
     void EquipGun(Inventory inv)
     {
         if (thisGun == gunTypes.pistolGun)
+        {
             inv.EquipPistol();
+            inv.hasPistol = true;
+        }
         else if (thisGun == gunTypes.shotgunGun)
+        {
             inv.EquipShotgun();
+            inv.hasShotgun = true;
+        }
         else if (thisGun == gunTypes.assaultGun)
+        {
             inv.EquipAssault();
+            inv.hasAssault = true;
+        }
     }
 
     void HolsterGun(Inventory inv)

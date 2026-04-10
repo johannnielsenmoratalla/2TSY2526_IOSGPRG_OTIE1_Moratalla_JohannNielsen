@@ -1,6 +1,8 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class Inventory : MonoBehaviour
 {
@@ -8,11 +10,17 @@ public class Inventory : MonoBehaviour
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private TextMeshProUGUI gunText;
 
+    public TextMeshProUGUI reloadingText;
+
     public gunTypes thisGun;
 
     public int pistolAmmo;
     public int shotgunAmmo;
     public int assaultAmmo;
+
+    public TextMeshProUGUI PistolAmmoDisplay;
+    public TextMeshProUGUI ShotgunAmmoDisplay;
+    public TextMeshProUGUI ARAmmoDsiplay;
 
     public int pistolClip;
     public int shotgunClip;
@@ -30,6 +38,17 @@ public class Inventory : MonoBehaviour
 
     private bool canShoot = true;
 
+    public bool hasPistol = false;
+    public bool hasShotgun = false;
+    public bool hasAssault = false;
+
+
+    private void Update()
+    {
+        PistolAmmoDisplay.text = $" {pistolClip} / {pistolAmmo}";
+        ShotgunAmmoDisplay.text = $" {shotgunClip} / {shotgunAmmo}";
+        ARAmmoDsiplay.text = $" {assaultClip} / {assaultAmmo}";
+    }
     public void HolsterAssault()
     {
         holsteredGun = assaultPrefab;
@@ -86,7 +105,14 @@ public class Inventory : MonoBehaviour
             }
             else if (thisGun == gunTypes.pistolGun && pistolClip <= 0)
             {
-                StartCoroutine(PistolReload(2.0f));
+                if (pistolAmmo <= 0)
+                {
+                    StartCoroutine(ShowMessage("NO AMMO", 1.5f));
+                }
+                else
+                {
+                    StartCoroutine(PistolReload(2.0f));
+                }
             }
 
             if (thisGun == gunTypes.shotgunGun && shotgunClip > 0)
@@ -95,7 +121,14 @@ public class Inventory : MonoBehaviour
             }
             else if (thisGun == gunTypes.shotgunGun && shotgunClip <= 0)
             {
-                StartCoroutine(ShotgunReload(2.7f));
+                if (shotgunAmmo <= 0)
+                {
+                    StartCoroutine(ShowMessage("NO AMMO", 1.5f));
+                }
+                else
+                {
+                    StartCoroutine(ShotgunReload(2.7f));
+                }
             }
         }
     }
@@ -109,7 +142,14 @@ public class Inventory : MonoBehaviour
             }
             else
             {
-                StartCoroutine(AssaultReload(2.3f));
+                if (assaultAmmo <= 0)
+                {
+                    StartCoroutine(ShowMessage("NO AMMO", 1.5f));
+                }
+                else
+                {
+                    StartCoroutine(AssaultReload(2.3f));
+                }
             }
         }
     }
@@ -191,6 +231,9 @@ public class Inventory : MonoBehaviour
         {
             canShoot = false;
 
+            reloadingText.text = "Reloading...";
+            reloadingText.gameObject.SetActive(true);
+
             yield return new WaitForSeconds(cooldown);
 
             if (pistolAmmo >= 15)
@@ -204,6 +247,8 @@ public class Inventory : MonoBehaviour
                 pistolAmmo = 0;
             }
 
+            reloadingText.gameObject.SetActive(false);
+
             canShoot = true;
         }
     }
@@ -213,6 +258,9 @@ public class Inventory : MonoBehaviour
         if (canShoot)
         {
             canShoot = false;
+
+            reloadingText.text = "Reloading...";
+            reloadingText.gameObject.SetActive(true);
 
             yield return new WaitForSeconds(cooldown);
 
@@ -227,6 +275,8 @@ public class Inventory : MonoBehaviour
                 shotgunAmmo = 0;
             }
 
+            reloadingText.gameObject.SetActive(false);
+
             canShoot = true;
         }
     }
@@ -236,9 +286,12 @@ public class Inventory : MonoBehaviour
     private IEnumerator AssaultReload(float cooldown)
     {
         if (isReloading) yield break;
-
+        
         isReloading = true;
         canShoot = false;
+
+        reloadingText.text = "Reloading...";
+        reloadingText.gameObject.SetActive(true);
 
         yield return new WaitForSeconds(cooldown);
 
@@ -253,7 +306,40 @@ public class Inventory : MonoBehaviour
             assaultAmmo = 0;
         }
 
+        reloadingText.gameObject.SetActive(false);
+
         canShoot = true;
         isReloading = false;
+    }
+
+    public void OnPistolButton()
+    {
+        if (!hasPistol) return;
+
+        EquipPistol();
+    }
+
+    public void OnShotgunButton()
+    {
+        if (!hasShotgun) return;
+
+        EquipShotgun();
+    }
+
+    public void OnAssaultButton()
+    {
+        if (!hasAssault) return;
+
+        EquipAssault();
+    }
+
+    IEnumerator ShowMessage(string message, float duration)
+    {
+        reloadingText.text = message;
+        reloadingText.gameObject.SetActive(true);
+
+        yield return new WaitForSeconds(duration);
+
+        reloadingText.gameObject.SetActive(false);
     }
 }
